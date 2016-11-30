@@ -19,8 +19,8 @@ Guessed procedure for calibration :
 
 Servo MOTOR1;  // create servo object to control a servo
 int motor_setpoint = 0; // value to store actual user setpoint for motor
-
-
+bool continueCalib = false;  // bool to ask user if he wants to make another calibration
+char userinput;         // to store user answer
 
 void setup() {
   Serial.begin(BAUDS);
@@ -35,22 +35,29 @@ void setup() {
 void loop() {
 //  val = analogRead(potpin);            // reads the value of the potentiometer (value between 0 and 1023)
 //  val = map(val, 0, 1023, 0, 180);     // scale it to use it with the servo (value between 0 and 180)
-  Serial.println("*** ESC calibration procedure ***");
-  Serial.read();                        // flush serial receive buffer
-  Serial.println("ESC must be powered off. Press any key to continue");
-  while(!Serial.available());          // wait for keystroke
-  Serial.read();
-  Serial.print(MAX_THROTTLE); Serial.println(" pulse width (MAX) is sent to ESC MOTOR1");
-  MOTOR1.writeMicroseconds(MAX_THROTTLE);                  // send MAX value to ESC
-  Serial.read();                        // flush serial receive buffer in case of accidental keystroke
-  Serial.println("Power on the ESC, wait for beeps and quickly press any key");
-  while(!Serial.available());          // wait for keystroke
-  Serial.read();
-  Serial.print(MIN_THROTTLE); Serial.println(" pulse width (MIN) is sent to ESC MOTOR1");
-  MOTOR1.writeMicroseconds(MIN_THROTTLE);                 // send MIN value to ESC
-
-  Serial.println("You should have heard some beeps and ESC MOTOR1 should be calibrated...");
-  Serial.println();
+  do{
+    Serial.println("*** ESC calibration procedure ***");
+    while(Serial.available()>0){Serial.read();}                        // flush serial receive buffer
+    Serial.println("ESC must be powered off. Press any key to continue");
+    while(!Serial.available());          // wait for keystroke
+    Serial.read();
+    Serial.print(MAX_THROTTLE); Serial.println(" pulse width (MAX) is sent to ESC MOTOR1");
+    MOTOR1.writeMicroseconds(MAX_THROTTLE);                  // send MAX value to ESC
+    while(Serial.available()>0){Serial.read();}                        // flush serial receive buffer in case of accidental keystroke
+    Serial.println("Power on the ESC, wait for beeps and quickly press any key");
+    while(!Serial.available());          // wait for keystroke
+    Serial.read();
+    Serial.print(MIN_THROTTLE); Serial.println(" pulse width (MIN) is sent to ESC MOTOR1");
+    MOTOR1.writeMicroseconds(MIN_THROTTLE);                 // send MIN value to ESC
+  
+    Serial.println("You should have heard some beeps and ESC MOTOR1 should be calibrated...");
+    Serial.println();
+    while(Serial.available()>0){Serial.read();}                        // flush serial receive buffer
+    Serial.print("Do you want to calibrate another ESC ?\nY to start again, any key to go to next step : ");
+    while(!Serial.available());          // wait for keystroke
+    userinput = Serial.read();
+    if(userinput == 'y' || userinput == 'Y'){continueCalib = true;}else{continueCalib = false;}
+  }while(continueCalib);
 
   Serial.println("*** Testing procedure ***");
   do{
