@@ -1,0 +1,11 @@
+TO DO LIST for this sketch.
+
+The sketch already does what it is supposed to.
+
+Eventually, it could be completed/modified to :
+
+1. Propose the user to skip the ESC calibration and directy go to testing procedure
+
+2. Propose the user to automatically apply a ramp from 0% to 100% throttle after the calibration procedure. Something like, start from 0, increment by 0.1% every 0.2ms up to 100% with serial output of the value sent. This would allow to check for dead zone, or useful to mesure thrust with a dynamometer...
+
+3. Add many extras like user-input of the range, the arduino PWM pin....
